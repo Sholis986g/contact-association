@@ -1,0 +1,13 @@
+{
+  "_description": "Profil impor forensik untuk log panggilan ekstraksi perangkat lokal",
+  "event_type": "CALL",
+  "mapping": {
+    "party_a": "source_number",
+    "party_b": "destination_number",
+    "timestamp": "call_timestamp",
+    "duration": "duration_seconds",
+    "direction": "direction",
+    "status": "call_type",
+    "event_id": "log_id"
+  }
+}

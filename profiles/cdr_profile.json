@@ -1,0 +1,14 @@
+{
+  "_description": "Profil impor forensik untuk Call Detail Records (CDR) operator seluler",
+  "event_type": "CALL",
+  "parser_name": "CSVParser",
+  "mapping": {
+    "party_a": "caller_msisdn",
+    "party_b": "callee_msisdn",
+    "timestamp": "call_datetime",
+    "duration": "duration_sec",
+    "direction": "call_direction",
+    "status": "call_status",
+    "event_id": "cdr_record_id"
+  }
+}

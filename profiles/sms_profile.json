@@ -1,0 +1,13 @@
+{
+  "_description": "Profil impor forensik untuk log SMS perangkat/operator",
+  "event_type": "MESSAGE",
+  "mapping": {
+    "party_a": "sender",
+    "party_b": "recipient",
+    "timestamp": "sent_date",
+    "direction": "direction",
+    "status": "delivery_status",
+    "event_id": "sms_id",
+    "thread_id": "conversation_id"
+  }
+}

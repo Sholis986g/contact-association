@@ -1,0 +1,11 @@
+{
+  "_description": "Profil impor forensik untuk data ekspor Telegram JSON (desktop / backup)",
+  "parser_name": "JSONParser",
+  "root_path": "messages",
+  "mapping": {
+    "party_a": "from_id",
+    "timestamp": "date",
+    "event_id": "id",
+    "contact_name": "from"
+  }
+}

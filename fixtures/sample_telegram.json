@@ -1,0 +1,31 @@
+{
+  "name": "Investasi Komunitas",
+  "type": "public_group",
+  "id": 987654321,
+  "messages": [
+    {
+      "id": 1,
+      "type": "message",
+      "date": "2024-01-14T10:00:00",
+      "from": "Admin",
+      "from_id": "081200000012",
+      "text": "Selamat datang semua"
+    },
+    {
+      "id": 2,
+      "type": "message",
+      "date": "2024-01-14T10:05:00",
+      "from": "Anggota 1",
+      "from_id": "083811119999",
+      "text": "Halo admin"
+    },
+    {
+      "id": 3,
+      "type": "message",
+      "date": "2024-01-14T10:10:00",
+      "from": "Anggota 2",
+      "from_id": "+6285277778888",
+      "text": "Siap mengikuti arahan"
+    }
+  ]
+}

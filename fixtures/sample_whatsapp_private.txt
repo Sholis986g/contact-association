@@ -1,0 +1,4 @@
+[15/01/24, 08:30:12] 081200000012: Selamat pagi, konfirmasi pengiriman dokumen
+[15/01/24, 08:32:00] +62 819-1234-5678: Selamat pagi, dokumen sudah kami terima kemarin.
+[15/01/24, 08:35:10] 081200000012: Baik terima kasih atas kerjasamanya.
+[16/01/24, 14:10:00] +62 819-1234-5678: Sama-sama pak.

@@ -1,0 +1,10 @@
+{
+  "_description": "Profil impor forensik untuk buku kontak hasil ekstraksi backup (JSON)",
+  "event_type": "CONTACT",
+  "mapping": {
+    "party_b": "phone_number",
+    "contact_name": "display_name",
+    "contact_owner": "device_owner_phone",
+    "event_id": "contact_id"
+  }
+}
