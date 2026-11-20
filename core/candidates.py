@@ -34,7 +34,7 @@ def find_candidates(
     SELECT
         phone,
         COUNT(DISTINCT source_name) as source_count,
-        COUNT(id) as total_events
+        COUNT(DISTINCT id) as total_events
     FROM matched_numbers
     WHERE phone LIKE ?
     GROUP BY phone
