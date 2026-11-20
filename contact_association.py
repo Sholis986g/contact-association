@@ -217,6 +217,8 @@ def cmd_lookup(args: argparse.Namespace) -> int:
         )
         if undated_sep:
             print(f"  Bukti tanpa tanggal di luar filter periode: {undated_sep}")
+        if not summary["sources_analyzed"]:
+            print("  Periksa database dan ID kasus. Pilih Impor bukti jika sumber belum dimuat.")
         if not summary["total_unique_associated_numbers"]:
             print("\n  Tidak ada asosiasi pada bukti dan periode yang dipilih.")
 
@@ -364,13 +366,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main() -> None:
-    parser = build_parser()
-    if len(sys.argv) == 1:
-        parser.print_help()
-        sys.exit(0)
-
-    args = parser.parse_args()
+def execute(args: argparse.Namespace) -> int:
 
     commands = {
         "import": cmd_import,
@@ -383,7 +379,18 @@ def main() -> None:
     except (OSError, sqlite3.Error) as error:
         print(f"\n[!] Gagal mengakses berkas atau database: {clean(error)}", file=sys.stderr)
         exit_code = 1
-    sys.exit(exit_code)
+    return exit_code
+
+
+def main() -> None:
+    parser = build_parser()
+    if len(sys.argv) > 1:
+        sys.exit(execute(parser.parse_args()))
+    if sys.stdin.isatty():
+        from core.menu import run_menu
+        run_menu(lambda argv: execute(parser.parse_args(argv)))
+    else:
+        parser.print_help()
 
 
 if __name__ == "__main__":

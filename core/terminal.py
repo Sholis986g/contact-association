@@ -11,14 +11,31 @@ def clean(value: object) -> str:
     return re.sub(r"[\x00-\x1f\x7f-\x9f\u202a-\u202e\u2066-\u2069]", " ", str(value))
 
 
+def color_available() -> bool:
+    if not sys.stdout.isatty() or "NO_COLOR" in os.environ or os.environ.get("TERM") == "dumb":
+        return False
+    if os.name != "nt":
+        return True
+    # Enable virtual terminal processing in classic Windows consoles.
+    import ctypes
+    import msvcrt
+    from ctypes import wintypes
+    handle = wintypes.HANDLE(msvcrt.get_osfhandle(sys.stdout.fileno()))
+    mode = wintypes.DWORD()
+    kernel = ctypes.windll.kernel32
+    return bool(kernel.GetConsoleMode(handle, ctypes.byref(mode))
+                and kernel.SetConsoleMode(handle, mode.value | 4))
+
+
+def accent(value: str, style: str = "1;36") -> str:
+    return f"\x1b[{style}m{value}\x1b[0m" if color_available() else value
+
+
 def heading(title: str, *, level: int = 1) -> None:
-    color = sys.stdout.isatty() and "NO_COLOR" not in os.environ and (
-        os.environ.get("TERM") != "dumb"
-    ) and (os.name != "nt" or bool(os.environ.get("WT_SESSION")))
     title = clean(title)
     marker = "=" if level == 1 else "-"
     label = f"{marker * 2} {title} {marker * 2}"
-    print(f"\n\x1b[1;36m{label}\x1b[0m" if color else f"\n{label}")
+    print("\n" + accent(label))
 
 
 def fields(*entries: tuple[str, object]) -> None:
