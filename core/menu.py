@@ -2,6 +2,8 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from shutil import get_terminal_size
+import sys
+from textwrap import wrap
 
 from .terminal import accent, clean, heading
 
@@ -25,17 +27,48 @@ def ask(label, default="", required=False):
         print("  Kolom ini perlu diisi.")
 
 
-def dashboard():
-    rule = "=" * max(12, min(70, get_terminal_size().columns - 2))
-    print("\n" + accent(rule, "36"))
-    print(accent("  CONTACT ASSOCIATION", "1;36") + "   /   FORENSIK DIGITAL")
-    print(accent(rule, "36"))
-    print("  Telusuri hubungan antar nomor dari kontak, log panggilan,")
-    print("  dan pesan yang sudah diimpor ke kasus. Analisis berjalan offline.\n")
-    for key, (_, title, purpose) in ACTIONS.items():
-        print(f"  {accent('[' + key + ']', '1;33')}  {title}\n       {purpose}")
-    print(f"  {accent('[5]', '1;33')}  Demo terpandu dengan data contoh")
-    print("  [0]  Keluar\n")
+def panel(title, body, width, rounded):
+    glyphs = "╭╮╰╯─│" if rounded else "┏┓┗┛━┃"
+    try:
+        glyphs.encode(sys.stdout.encoding or "ascii")
+    except UnicodeEncodeError:
+        glyphs = "++++-|"
+    tl, tr, bl, br, h, v = glyphs
+    inner = width - 4
+    lines = [tl + h * (width - 2) + tr]
+    for paragraph in (title, *body):
+        for line in wrap(paragraph, inner) or [""]:
+            lines.append(f"{v} {line:<{inner}} {v}")
+    return lines + [bl + h * (width - 2) + br]
+
+
+def dashboard(theme, case, db):
+    board = theme == "board"
+    width = max(16, min(92, get_terminal_size().columns - 2))
+    color = "1;36" if board else "1;33"
+    name = "Papan bukti" if board else "Berkas kasus"
+    intro = panel("CONTACT ASSOCIATION  /  " + name.upper(), [
+        "Telusuri interaksi nomor dari artefak lokal.",
+        f"Kasus: {clean(case)}   |   Database: {clean(Path(db).name)}",
+    ], width, board)
+    print("\n" + "\n".join(accent(line, color) for line in intro))
+    items = [(key, title, desc) for key, (_, title, desc) in ACTIONS.items()]
+    if board:
+        # Dua kartu sejajar bila jendela cukup lebar.
+        columns = 2 if width >= 66 else 1
+        card_width = (width - 2 * (columns - 1)) // columns
+        for start in range(0, len(items), columns):
+            cards = [panel(f"[{key}] {title.upper()}", [desc], card_width, True)
+                     for key, title, desc in items[start:start + columns]]
+            for row in range(max(map(len, cards))):
+                print("  ".join(card[row] if row < len(card) else " " * card_width
+                                for card in cards))
+    else:
+        entries = []
+        for key, title, desc in items:
+            entries.extend([f"[{key}]  {title}", "     " + desc])
+        print("\n".join(panel("INDEKS TINDAKAN", entries, width, False)))
+    print(accent("[5] Demo   [T] Ganti tema   [0] Keluar", color))
 
 
 def demo(run):
@@ -50,10 +83,14 @@ def demo(run):
 
 def run_menu(run):
     db, case, operator = "latihan.sqlite", "DEMO", "OP01"
+    theme = "board"
     while True:
         try:
-            dashboard()
-            choice = input("  Pilih tindakan [0-5] > ").strip()
+            dashboard(theme, case, db)
+            choice = input("  Pilih [0-5 / T] > ").strip()
+            if choice.lower() == "t":
+                theme = "dossier" if theme == "board" else "board"
+                continue
             if choice == "0":
                 return
             if choice == "5":
@@ -88,7 +125,7 @@ def run_menu(run):
                             argv.extend([flag, value])
                 run(argv)
             else:
-                print("  Masukkan angka 0 sampai 5.")
+                print("  Masukkan angka 0 sampai 5 atau T.")
                 continue
             input("\n  Tekan Enter untuk kembali ke menu...")
         except (InterruptedError, KeyboardInterrupt):
